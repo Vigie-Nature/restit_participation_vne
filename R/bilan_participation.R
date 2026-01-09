@@ -120,7 +120,7 @@ new_users_summary <- cum_particip %>%
 # revert order for plot
 
 
-pluriannual_users_summary <- new_users_summary
+pluriannual_users_summary <- new_users_summary %>%
   filter(year_parti > 1) %>%
   mutate(nb_annee_partic = ordered(year_parti,sort(unique(new_users_summary$year_parti))))
 
