@@ -18,7 +18,7 @@ plot_participation_per_year <- function(df) {
   }
   
   graph_participation <- ggplot(df, aes(x = annee_scolaire, y = !!sym(y_var), group = 1)) +
-    geom_line(color = "#00CC33", size= 1) +
+    geom_line(color = "#00CC33", linewidth= 1) +
     geom_point(color = "#00CC33", size = 2) +
     geom_text(aes(label = !!sym(y_var)), position = position_dodge(width = 1),
               vjust = +2, size = 3)+

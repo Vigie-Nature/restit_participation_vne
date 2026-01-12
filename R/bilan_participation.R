@@ -10,6 +10,7 @@ library(dplyr)
 
 # load scripts
 source("../export_data_management/R/functions_import_database_VN.R")
+source("../hackathon.vn/R/download_from_ftp.R")
 source("R/stats_globales.R")
 source("R/calc_school_year.R")
 source("R/label_years.R")
@@ -17,7 +18,7 @@ source("R/plot_participation.R")
 source("R/vne_style.R")
 
 # import data
-participation_vne <- import_from_vne(read_sql_query("sql/Resume_complet_des_observations_moins_agrege.sql"))
+participation_vne <- download_from_ftp("export_vne_participation_observations.csv")
 
 ### clean etab names ----
 participation_vne$type_etablissement[participation_vne$type_etablissement == "Autre" | participation_vne$type_etablissement == "structure"] <- "Autre"
@@ -29,10 +30,10 @@ participation_vne$protocole[participation_vne$protocole == "Escargots des Jardin
 participation_vne$protocole[participation_vne$protocole == "Lichen Go"] <- "Lichen GO"
 
 ### add observation month ----
-participation_vne$moisObs <- lubridate::month(participation_vne$date_observation)
+participation_vne$moisObs <- lubridate::month(participation_vne$session_date)
 
 
-participation_vne$annee_scolaire = calc_school_year(participation_vne$date_observation)
+participation_vne$annee_scolaire = calc_school_year(participation_vne$session_date)
 participation_vne <- participation_vne %>%
   filter(annee_scolaire > 2012)
 participation_vne$annee_scolaire <- as.character(participation_vne$annee_scolaire)
@@ -84,14 +85,13 @@ participation_protocole_temps_classes <- ggplot(participation_vne_count_years_pr
   scale_x_discrete(labels = xlabels) +
   facet_wrap(~protocole)
 
+participation_protocole_temps_classes
 
 ### Fidelisation
 
 # combien les profs font-ils de session d'observation
-participation_vne$user_id <- participation_vne$observateur
-participation_vne$annee_participation <- participation_vne$annee_scolaire
-participation_vne$type_etablissement <- participation_vne$type_etablissement
 
+participation_vne$annee_participation <- participation_vne$annee_scolaire
 
 # fidelisation par etablissements
 
