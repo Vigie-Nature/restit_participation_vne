@@ -16,8 +16,11 @@ source("R/label_years.R")
 source("R/plot_participation.R")
 source("R/vne_style.R")
 
+readRenviron(".Renviron")
+
 # import data
 participation_vne <- import_from_vne(read_sql_query("sql/Resume_complet_des_observations_moins_agrege.sql"))
+
 
 ### clean etab names ----
 participation_vne$type_etablissement[participation_vne$type_etablissement == "Autre" | participation_vne$type_etablissement == "structure"] <- "Autre"
@@ -39,8 +42,20 @@ participation_vne$annee_scolaire <- as.character(participation_vne$annee_scolair
 
 
 ### graph_participation classes
+
 nombre_classe_par_an <- stats_globales(participation_vne, selectAnnee = "table")
+
 nombre_classe_par_an$labelsYears = label_years(nombre_classe_par_an$annee, retour = TRUE)
+participation_chiro =         c(    16,     16,     16,     16,     16,     16,     16,     23,     38,     28,     15,     25,     20)
+names(participation_chiro) <- c("2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026")
+
+participation_appetisol =         c(     0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,      0,     19)
+names(participation_appetisol) <- c("2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022", "2023", "2024", "2025", "2026")
+
+nombre_classe_par_an$classes = nombre_classe_par_an$classes + participation_chiro + participation_appetisol
+
+
+
 plot_participation_per_year(nombre_classe_par_an)
 
 ### graph participation profs
@@ -50,6 +65,7 @@ plot_participation_per_year(nombre_classe_par_an)
 
 ### graph participation observations
 nombre_classe_par_an <- stats_globales(participation_vne, selectAnnee = "table", compter = "observations")
+
 nombre_classe_par_an$labelsYears = label_years(nombre_classe_par_an$annee, retour = TRUE)
 plot_participation_per_year(nombre_classe_par_an)
 
@@ -59,13 +75,19 @@ nombre_classe_par_an$labelsYears = label_years(nombre_classe_par_an$annee, retou
 plot_participation_per_year(nombre_classe_par_an)
 
 ### graph participation eleves
-nombre_classe_par_an <- stats_globales(participation_vne, selectAnnee = "table", compter = "eleves")
-nombre_classe_par_an$labelsYears = label_years(nombre_classe_par_an$annee, retour = TRUE)
+nombre_eleves_par_an <- stats_globales(participation_vne, selectAnnee = "table", compter = "eleves")
+nombre_eleves_par_an$labelsYears = label_years(nombre_eleves_par_an$annee, retour = TRUE)
+nombre_eleves_par_an$eleves = nombre_classe_par_an$eleves + participation_chiro*25 + participation_appetisol*25
 plot_participation_per_year(nombre_classe_par_an)
 
 # graph par protocoles ----
 ## calculate metric ----
 participation_vne_count_years_protocoles <-stats_globales(participation_vne, selectAnnee = "table", selectProtocole = "table")
+chiro <- data.frame( annee_scolaire = names(participation_chiro), protocole = "Vigie-Chiro", classes = participation_chiro)
+appetisol <- data.frame( annee_scolaire = names(participation_appetisol), protocole = "Appétisol", classes = participation_appetisol)
+
+participation_vne_count_years_protocoles <- rbind(participation_vne_count_years_protocoles, chiro, appetisol)
+
 
 ### prepare labels ----
 participation_vne_count_years_protocoles$annee_scolaire_labels <- label_years(participation_vne_count_years_protocoles$annee_scolaire, retour = TRUE)
@@ -73,6 +95,7 @@ participation_vne_count_years_protocoles$annee_scolaire_labels <- label_years(pa
 # reduce label number
 xlabels <- sort(unique(participation_vne_count_years_protocoles$annee_scolaire_labels))
 xlabels[seq(2, length(xlabels), 2)] <- ""
+
 
 ## make graph ----
 participation_protocole_temps_classes <- ggplot(participation_vne_count_years_protocoles, aes(x = annee_scolaire_labels, y = classes, fill = protocole)) +
@@ -84,8 +107,9 @@ participation_protocole_temps_classes <- ggplot(participation_vne_count_years_pr
   scale_x_discrete(labels = xlabels) +
   facet_wrap(~protocole)
 
+participation_protocole_temps_classes
 
-### Fidelisation
+### Fidelisation ----
 
 # combien les profs font-ils de session d'observation
 participation_vne$user_id <- participation_vne$observateur
@@ -120,7 +144,7 @@ new_users_summary <- cum_particip %>%
 # revert order for plot
 
 
-pluriannual_users_summary <- new_users_summary
+pluriannual_users_summary <- new_users_summary |>
   filter(year_parti > 1) %>%
   mutate(nb_annee_partic = ordered(year_parti,sort(unique(new_users_summary$year_parti))))
 

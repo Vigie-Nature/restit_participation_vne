@@ -24,7 +24,9 @@ VNE_colors <- list(
   `Observatoire des Vers de Terre` = "#895f13",
   texteVNE = "#314C4C",
   vertclairVNE = "#ddeddd",
-  `ALAMER` = "#1d8f8fff"
+  `ALAMER` = "#1d8f8fff",
+  `Vigie-Chiro` = "#ba6dba",
+  `Appétisol` = "#732735ff"
 )
 
 #' Function to extract VNE colors as hex codes
@@ -50,7 +52,9 @@ VNE_palettes <- list(
                                "SPIPOLL",
                                "Lichen GO",
                                "Observatoire des Vers de Terre",
-                               "ALAMER"),
+                               "ALAMER",
+                              "Vigie-Chiro",
+                            "Appétisol"),
   
   `protocoles`  = VNE_cols("orangeVNE",
                            "rougeVNE",
