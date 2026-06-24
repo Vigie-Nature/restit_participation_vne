@@ -10,7 +10,6 @@ select distinct
 	TAB2.protocole,
 	(case when TAB2.Nombre_individus>0 then TAB2.Espece
 		  else null END) as Espece2,
-	--TAB2.Espece as Espece,
 	TAB2.Nombre_individus as Nombre_individus,
 	TAB2.calcul_diversite,
 	(case when TAB2.photo='Photo de  : ' then NULL
@@ -25,7 +24,6 @@ select distinct
 	TAB2.zone_educative
 		  
 	from (
-		--2 -> Ce niveau d'aggregation permet d'avoir une ligne par espece avec le nombre d'individus (utile pour gerer les vers de terre)
 		select distinct 
 		TAB.Num_observation,
 		concat(UPPER(TAB.nom), ' ',initcap(TAB.prenom), ' | ', TAB.email) as observateur,
@@ -51,7 +49,6 @@ select distinct
 
 		
 		from (
-			--1 -> Cette premiere sous-requ?te permet d'avoir la liste des observations, de regrouper les vers adultes et juveniles, de gerer l'ancien protocole inventaire escargots et enfin d'ajouter une abondance =1 pour les plantes
 			SELECT
 			   observations.observationpk AS Num_observation,
 			   users.userpk as userpk,
@@ -109,15 +106,6 @@ select distinct
 			
 			WHERE
 			users.email not in('vne5@yopmail.com')
-			--and dico_structures.zipcode in ('74450', '74220', '74230', '74290')
-			--and dico_structures.zipcode='91350'
-			--and dico_structures.academiefk = 12
-			--and observations.observationpk=105508
-			--and observations.protocolefk = '14'
-			--and dico_structures.villefk ='54982'
-			-- and dico_structures.no_uai in('0931217T', '0931196V', '0921610A', '0771600W', '0770930T', '0940138P', '0772296C', '0751152V', '0921178F', '0921541A', '0951785Z', '0951034H', '0920147K', '0920134W', '0950640E', '0911962N', '0922801V')
-			-- and left(dico_structures.zipcode, 2) in('95','75','78','91', '92', '93', '77', '94')
-			
 			order by observations.observationpk
 			)TAB
 		
