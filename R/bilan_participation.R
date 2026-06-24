@@ -10,7 +10,6 @@ library(dplyr)
 
 # load scripts
 source("../export_data_management/R/functions_import_database_VN.R")
-source("../hackathon.vn/R/download_from_ftp.R")
 source("R/stats_globales.R")
 source("R/calc_school_year.R")
 source("R/label_years.R")
@@ -20,7 +19,7 @@ source("R/vne_style.R")
 readRenviron(".Renviron")
 
 # import data
-participation_vne <- download_from_ftp("export_vne_participation_observations.csv")
+participation_vne <- import_from_vne(read_sql_query("sql/Resume_complet_des_observations_moins_agrege.sql"))
 
 ### clean etab names ----
 participation_vne$type_etablissement[participation_vne$type_etablissement == "Autre" | participation_vne$type_etablissement == "structure"] <- "Autre"
@@ -77,7 +76,7 @@ plot_participation_per_year(nombre_classe_par_an)
 ### graph participation eleves
 nombre_eleves_par_an <- stats_globales(participation_vne, selectAnnee = "table", compter = "eleves")
 nombre_eleves_par_an$labelsYears = label_years(nombre_eleves_par_an$annee, retour = TRUE)
-nombre_eleves_par_an$eleves = nombre_classe_par_an$eleves + participation_chiro*25 + participation_appetisol*25
+nombre_eleves_par_an$eleves = nombre_eleves_par_an$eleves + participation_chiro*25 + participation_appetisol*25
 plot_participation_per_year(nombre_classe_par_an)
 
 # graph par protocoles ----
@@ -154,11 +153,12 @@ ggplot(pluriannual_users_summary, aes(x = annee_participation, y = nombre_users)
   theme(legend.position="bottom") +
   guides(fill=guide_legend(nrow=2,byrow=TRUE))
 
-new_users_summary$nb_annee_partic_cat <- ifelse(new_users_summary$year_parti == 1, "Nouveau user", "User pluriannuel")
+new_users_summary$nb_annee_partic_cat <- ifelse(new_users_summary$year_parti == 1, "Nouvel utilisateur", "Utilisateur pluriannuel")
 
 ggplot(new_users_summary, aes(x = annee_participation, y = nombre_users)) +
   geom_col(aes(fill = nb_annee_partic_cat)) +
   facet_wrap(~type_etablissement) +
+  labs(fill="", y = "Nombre d'utilisateurs", x = "Année de participation") +
   theme_minimal() +
   theme(legend.position="bottom") +
   guides(fill=guide_legend(nrow=2,byrow=TRUE))

@@ -1,12 +1,12 @@
 select distinct 
-	TAB2.Num_observation,
+	TAB2.Num_observation as session_id,
 	TAB2.observateur,
 	TAB2.etablissement,
 	TAB2.zip_etab as code_postal_etab,
 	TAB2.type_etablissement,
 	TAB2.Niveau_scolaire,
 	TAB2.effectifs,
-	TAB2.Date_observation,
+	TAB2.Date_observation as session_date,
 	TAB2.protocole,
 	(case when TAB2.Nombre_individus>0 then TAB2.Espece
 		  else null END) as Espece2,
@@ -15,7 +15,7 @@ select distinct
 	(case when TAB2.photo='Photo de  : ' then NULL
 			  else TAB2.photo END) as Photo,
 	TAB2.structurepk,
-	TAB2.userpk,
+	TAB2.userpk as user_id,
 	TAB2.groupepk,
 	TAB2.zonepk,
 	TAB2.academie,
