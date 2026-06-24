@@ -7,9 +7,9 @@ stats_globales <- function(df, compter = "classes", selectAcademie = "all", sele
   if (!compter %in% c("classes", "profs", "etablissements", "observations", "eleves", "protocoles")) stop("L'argument compter doit prendre l'une des valeurs suivantes : 'classes', 'profs', 'etablissements', 'observations', 'protocoles', 'eleves'")
   variable_a_compter <- switch (compter,
                                 classes = "groupepk",
-                                profs = "userpk",
+                                profs = "user_id",
                                 etablissements = "structurepk",
-                                observations = "num_observation",
+                                observations = "session_id",
                                 eleves = "groupepk",
                                 protocoles = "protocole"
   )
