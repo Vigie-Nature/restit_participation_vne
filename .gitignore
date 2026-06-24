@@ -3,3 +3,6 @@
 .RData
 .Ruserdata
 .env
+.env_old
+.Renviron
+*.Rproj
