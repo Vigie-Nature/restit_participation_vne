@@ -77,7 +77,7 @@ plot_participation_per_year(nombre_classe_par_an)
 nombre_eleves_par_an <- stats_globales(participation_vne, selectAnnee = "table", compter = "eleves")
 nombre_eleves_par_an$labelsYears = label_years(nombre_eleves_par_an$annee, retour = TRUE)
 nombre_eleves_par_an$eleves = nombre_eleves_par_an$eleves + participation_chiro*25 + participation_appetisol*25
-plot_participation_per_year(nombre_classe_par_an)
+plot_participation_per_year(nombre_eleves_par_an)
 
 # graph par protocoles ----
 ## calculate metric ----
